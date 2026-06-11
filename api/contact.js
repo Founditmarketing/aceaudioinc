@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM = 'Ace Audio <hello@aceaudioinc.com>';
-const TO = '0nleiter@gmail.com';
+const TO = 'Info@aceaudioinc.com';
 
 function escapeHtml(str) {
   return String(str ?? '')
