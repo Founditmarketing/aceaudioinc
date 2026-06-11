@@ -940,7 +940,7 @@ Alexandria, LA 71301</div>
 				<div class="et-pb-contact-message"></div>
 				
 				<div class="et_pb_contact">
-					<form class="et_pb_contact_form clearfix" method="post" action="https://aceaudioinc.com/contact-us/">
+					<form id="ace-contact-form" class="et_pb_contact_form clearfix" method="post" action="/api/contact">
 						<p class="et_pb_contact_field et_pb_contact_field_0 et_pb_contact_field_half" data-id="name" data-type="input">
 				
 				
@@ -975,8 +975,53 @@ Alexandria, LA 71301</div>
 							
 							<button type="submit" name="et_builder_submit_button" class="et_pb_contact_submit et_pb_button" data-icon="&#x24;">Send Message</button>
 						</div>
-						<input type="hidden" id="_wpnonce-et-pb-contact-form-submitted-0" name="_wpnonce-et-pb-contact-form-submitted-0" value="6acc46e29b" /><input type="hidden" name="_wp_http_referer" value="/contact-us/" />
 					</form>
+					<script>
+					(function () {
+						var form = document.getElementById('ace-contact-form');
+						if (!form) return;
+						var messageBox = form.closest('.et_pb_contact_form_container').querySelector('.et-pb-contact-message');
+						form.addEventListener('submit', function (e) {
+							e.preventDefault();
+							messageBox.textContent = '';
+							messageBox.style.color = '';
+							var payload = {
+								name: form.querySelector('[data-original_id="name"]').value.trim(),
+								phone: form.querySelector('[data-original_id="phone"]').value.trim(),
+								email: form.querySelector('[data-original_id="email"]').value.trim(),
+								message: form.querySelector('[data-original_id="message"]').value.trim()
+							};
+							var submitBtn = form.querySelector('button[type="submit"]');
+							submitBtn.disabled = true;
+							var originalLabel = submitBtn.textContent;
+							submitBtn.textContent = 'Sending...';
+							fetch('/api/contact', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/json' },
+								body: JSON.stringify(payload)
+							})
+							.then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+							.then(function (res) {
+								if (res.ok) {
+									messageBox.style.color = '#2a8a3e';
+									messageBox.textContent = 'Thanks! Your message has been sent. We will be in touch shortly.';
+									form.reset();
+								} else {
+									messageBox.style.color = '#c0392b';
+									messageBox.textContent = (res.data && res.data.error) || 'Something went wrong. Please try again.';
+								}
+							})
+							.catch(function () {
+								messageBox.style.color = '#c0392b';
+								messageBox.textContent = 'Network error. Please try again.';
+							})
+							.finally(function () {
+								submitBtn.disabled = false;
+								submitBtn.textContent = originalLabel;
+							});
+						});
+					})();
+					</script>
 				</div>
 			</div>
 			
