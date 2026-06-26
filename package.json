@@ -1,9 +1,0 @@
-{
-  "name": "aceaudioinc",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "dependencies": {
-    "resend": "^4.0.1"
-  }
-}
